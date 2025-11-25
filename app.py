@@ -22,10 +22,6 @@ uploads = db['uploads']
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK-SECRET-KEY')
 
-@app.route("/")
-def index():
-    return render_template('index.html')
-
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -83,3 +79,10 @@ def recieve_board():
         return jsonify({'success' : True, "description" : 'Nothing on the Clipboard'}), 400
     else:
         return jsonify({'success' : True, 'payload' : upload['payload'], 'description' : 'Pasted from Clipboard'}), 200
+    
+@app.route("/api/login-status", methods=['POST'])
+def login_status():
+    if 'username' in session:
+        return jsonify({'success' : True, 'response' :session['username']})
+    else:
+        return jsonify({'success' : True, 'response' : 'User not logged in'})
