@@ -88,3 +88,7 @@ def login_status():
         return jsonify({'success' : True, 'response' :session['username']}), 400
     else:
         return jsonify({'success' : True, 'response' : 'User not logged in'}), 401  
+    
+    
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
