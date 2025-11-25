@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, jsonify, make_response, session
+from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
@@ -20,10 +21,11 @@ users = db['users']
 uploads = db['uploads']
 
 app = Flask(__name__)
+cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': "http://127.0.0.1:5500/*"}})
+
+
 app.secret_key = os.getenv('FLASK-SECRET-KEY')
-@app.route("/")
-def test():
-    return "API Online!"
+
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -70,7 +72,7 @@ def send_payload():
     uploads.replace_one({'user_id' : user['_id']} , {'user_id' : user['_id'], 'payload' : request.json['payload'], 'date-created' : datetime.fromisoformat(request.json['date'])}, True)
     return jsonify({'success': True, 'description' : 'Sent Payload : ' + str(request.json)}) , 200
 
-@app.route("/api/recieve", methods=['POST'])
+@app.route("/api/receive", methods=['POST'])
 def recieve_board():
     if not 'username' in session:
         return jsonify({'success' : False, "description" : 'Not Logged in'}), 401
@@ -85,10 +87,9 @@ def recieve_board():
 @app.route("/api/login-status", methods=['POST'])
 def login_status():
     if 'username' in session:
-        return jsonify({'success' : True, 'response' :session['username']}), 400
+        return jsonify({'success' : True, 'response' : session['username']}), 200
     else:
-        return jsonify({'success' : True, 'response' : 'User not logged in'}), 401  
-    
+        return jsonify({'success' : True, 'response' : 'User not logged in'}), 200
     
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
