@@ -21,9 +21,13 @@ users = db['users']
 uploads = db['uploads']
 
 app = Flask(__name__)
-cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': "http://127.0.0.1:5500"}})
+app.config.update(
+    SESSION_COOKIE_SECURE=True
+)
+cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': ["http://127.0.0.1:5500",'chrome-extension://hjkiogfeljgpfefeihhlakafgnjkobgj']}})
 
 app.secret_key = os.getenv('FLASK-SECRET-KEY')
+
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -86,9 +90,9 @@ def recieve_board():
 @app.route("/api/login-status", methods=['POST'])
 def login_status():
     if 'username' in session:
-        return jsonify({'success' : True, 'response' : session['username']}), 200
+        return jsonify({'success' : True, 'response' : 'User:' + session['username']}), 200
     else:
         return jsonify({'success' : True, 'response' : 'User not logged in'}), 200
     
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    app.run(debug=True, port=int(os.environ.get("PORT", 8080)))
