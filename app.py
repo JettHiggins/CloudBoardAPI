@@ -22,8 +22,9 @@ uploads = db['uploads']
 
 app = Flask(__name__)
 app.config.update(
-    SESSION_COOKIE_SECURE=True
-)
+            SESSION_COOKIE_SAMESITE='None',
+            SESSION_COOKIE_SECURE=True
+        )
 cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': ["http://127.0.0.1:5500",'chrome-extension://hjkiogfeljgpfefeihhlakafgnjkobgj']}})
 
 app.secret_key = os.getenv('FLASK-SECRET-KEY')
