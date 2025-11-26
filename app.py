@@ -21,8 +21,7 @@ users = db['users']
 uploads = db['uploads']
 
 app = Flask(__name__)
-cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': "http://127.0.0.1:5500/*"}})
-
+cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': "http://127.0.0.1:5500"}})
 
 app.secret_key = os.getenv('FLASK-SECRET-KEY')
 
@@ -32,7 +31,7 @@ def login():
     user = users.find_one({"username" : data['username']})
     if user == None:
         return jsonify({'success' : False, 'description' : "No User found"}), 401
-    if data['username'] == user['username']and check_password_hash(user['password'], data['password']):
+    if data['username'] == user['username'] and check_password_hash(user['password'], data['password']):
         session['username'] = user['username']
         return jsonify({'success': True, 'username': data['username']}), 200
     return jsonify({'success' : False, 'description' : "Failed login incorrect username/pass"}), 401
