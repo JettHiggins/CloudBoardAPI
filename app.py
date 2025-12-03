@@ -12,13 +12,17 @@ from datetime import datetime
 
 load_dotenv()
 
-uri = os.getenv('MONGO-URL')
+user_uri = os.getenv('MONGO-URL-USERS')
+uploads_uri = os.getenv('MONGO-URL-UPLOADS')
 
-client = MongoClient(uri, server_api=ServerApi('1'))
+user_client = MongoClient(user_uri, server_api=ServerApi('1'))
+upload_client = MongoClient(uploads_uri, server_api=ServerApi('1'))
 
-db = client['CloudBoard']
-users = db['users']
-uploads = db['uploads']
+user_db = user_client['CloudBoard']
+upload_db = upload_client['CloudBoard']
+
+users = user_db['users']
+uploads = upload_db['uploads']
 
 app = Flask(__name__)
 app.config.update(
@@ -74,7 +78,7 @@ def send_payload():
     user = users.find_one({"username": session['username']})
 
     #insert user ID with data - Automatically deletes in 10 seconds 
-    uploads.replace_one({'user_id' : user['_id']} , {'user_id' : user['_id'], 'payload' : request.json['payload'], 'date-created' : datetime.fromisoformat(request.json['date'])}, True)
+    uploads.replace_one({'user_id' : user['_id']} , {'user_id' : user['_id'], 'payload' : request.json['payload'], 'date-created' : datetime.fromisoformat(request.json['date'])}, upsert = True)
     return jsonify({'success': True, 'description' : 'Sent Payload : ' + str(request.json)}) , 200
 
 @app.route("/api/receive", methods=['POST'])
@@ -92,7 +96,7 @@ def recieve_board():
 @app.route("/api/login-status", methods=['POST'])
 def login_status():
     if 'username' in session:
-        return jsonify({'success' : True, 'response' : 'User:' + session['username']}), 200
+        return jsonify({'success' : True, 'response' : 'User: ' + session['username']}), 200
     else:
         return jsonify({'success' : True, 'response' : 'User not logged in'}), 200
     
