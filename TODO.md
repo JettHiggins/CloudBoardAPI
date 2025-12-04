@@ -3,6 +3,7 @@
 
 - [x] Allow Extension to Send Requests.
 
+- [ ] Make sure before going into prod, change extension url to only allow my specific url
 
 - [ ] Add CSRF Protections
  - I mean like so if someone gets someones username (Which is easy right now because you can mess with inputs) - just need to make sure usernames are parsed as strings and not objects
