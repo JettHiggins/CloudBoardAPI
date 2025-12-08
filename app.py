@@ -30,7 +30,7 @@ app.config.update(
             SESSION_COOKIE_SECURE=True,
             SESSION_COOKIE_HTTPONLY=True
         )
-cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': ['chrome-extension://hjkiogfeljgpfefeihhlakafgnjkobgj','cloud-clipboard-omega.vercel.app']}})
+cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': ['chrome-extension://hjkiogfeljgpfefeihhlakafgnjkobgj','cloud-clipboard-omega.vercel.app/*']}})
 
 app.secret_key = os.getenv('FLASK-SECRET-KEY')
 
