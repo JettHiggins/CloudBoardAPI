@@ -30,7 +30,7 @@ app.config.update(
             SESSION_COOKIE_SECURE=True,
             SESSION_COOKIE_HTTPONLY=True
         )
-cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': ["http://127.0.0.1:5500",'chrome-extension://hjkiogfeljgpfefeihhlakafgnjkobgj','moz-extension://*']}})
+cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': ["http://127.0.0.1:8000",'chrome-extension://hjkiogfeljgpfefeihhlakafgnjkobgj','moz-extension://*']}})
 
 app.secret_key = os.getenv('FLASK-SECRET-KEY')
 
@@ -68,7 +68,6 @@ def register():
     else:
         return jsonify({'success' : False, 'description': 'User already exists'}) , 409
 
-# Can change DB storage to only store one item per username - most recent uploaded 
 @app.route("/api/send" , methods=['POST'])
 def send_payload():
     if not 'username' in session:
