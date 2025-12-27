@@ -30,7 +30,7 @@ app.config.update(
             SESSION_COOKIE_SECURE=True,
             SESSION_COOKIE_HTTPONLY=True
         )
-cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': ['chrome-extension://hjkiogfeljgpfefeihhlakafgnjkobgj','https://cloud-clipboard-omega.vercel.app/*']}})
+cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': ['chrome-extension://hjkiogfeljgpfefeihhlakafgnjkobgj','https://www.cloudclipboard.app']}})
 
 app.secret_key = os.getenv('FLASK-SECRET-KEY')
 
@@ -75,6 +75,11 @@ def send_payload():
 
     # Find User ID -- protect user data
     user = users.find_one({"username": session['username']})
+    
+    if user == None:
+        return jsonify({'success' : False, 'description' : 'User wasnt found'}), 401
+    if request.json == None: 
+        return jsonify({'success' : False, 'description' : 'No upload received'}), 401
 
     #insert user ID with data - Automatically deletes in 10 seconds 
     uploads.replace_one({'user_id' : user['_id']} , {'user_id' : user['_id'], 'payload' : request.json['payload'], 'date-created' : datetime.fromisoformat(request.json['date'])}, upsert = True)
@@ -86,6 +91,9 @@ def recieve_board():
         return jsonify({'success' : False, "description" : 'Not Logged in'}), 401
     
     user = users.find_one({"username" : session['username']})
+    if user == None:
+        return jsonify({'success' : False, 'description' : 'User not found'})
+
     upload = uploads.find_one({'user_id' : ObjectId(str(user['_id']))})
     if upload == None:
         return jsonify({'success' : True, "description" : 'Nothing on the Clipboard'}), 400
