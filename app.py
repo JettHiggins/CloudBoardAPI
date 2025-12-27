@@ -43,6 +43,7 @@ def login():
         return jsonify({'success' : False, 'description' : "No User found"}), 401
     if data['username'] == user['username'] and check_password_hash(user['password'], data['password']):
         session['username'] = user['username']
+        session.permanent = True
         return jsonify({'success': True, 'username': data['username']}), 200
     return jsonify({'success' : False, 'description' : "Failed login incorrect username/pass"}), 401
 
@@ -64,6 +65,7 @@ def register():
     if users.find_one({"username" : username}) == None:
         users.insert_one({"username": username, "password" : generate_password_hash(data['password'])})
         session['username'] = username
+        session.permanent = True
         return jsonify({'success' : True, 'username' : data['username']})
     else:
         return jsonify({'success' : False, 'description': 'User already exists'}) , 409
