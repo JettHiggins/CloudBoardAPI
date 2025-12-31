@@ -30,7 +30,7 @@ app.config.update(
             SESSION_COOKIE_SECURE=True,
             SESSION_COOKIE_HTTPONLY=True
         )
-cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': ['chrome-extension://hjkiogfeljgpfefeihhlakafgnjkobgj','https://www.cloudclipboard.app']}})
+cors = CORS(app, supports_credentials=True , resources={r'/*' : {'origins': ['chrome-extension://hjkiogfeljgpfefeihhlakafgnjkobgj','https://www.cloudclipboard.app', 'https://cloudclipboard.app'}})
 
 app.secret_key = os.getenv('FLASK-SECRET-KEY')
 
@@ -83,7 +83,6 @@ def send_payload():
     if request.json == None: 
         return jsonify({'success' : False, 'description' : 'No upload received'}), 401
 
-    #insert user ID with data - Automatically deletes in 10 seconds 
     uploads.replace_one({'user_id' : user['_id']} , {'user_id' : user['_id'], 'payload' : request.json['payload'], 'date-created' : datetime.fromisoformat(request.json['date'])}, upsert = True)
     return jsonify({'success': True, 'description' : 'Sent Payload : ' + str(request.json)}) , 200
 
